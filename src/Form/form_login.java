@@ -153,7 +153,7 @@ public class form_login extends javax.swing.JFrame {
                   juser=Integer.parseInt(res.getObject("jml").toString());
                   if(juser > 0){
                        JOptionPane.showMessageDialog(null, "Login Berhasil", "Pesan", JOptionPane.INFORMATION_MESSAGE);
-                       new form_user().show();
+                       new MenuUtama().show();
                   }else{
                        JOptionPane.showMessageDialog(null, "Login Gagal", "Pesan", JOptionPane.INFORMATION_MESSAGE);
                   }

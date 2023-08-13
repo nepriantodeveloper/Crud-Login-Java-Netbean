@@ -8,7 +8,9 @@ package Form;
 import konfigurasi.Koneksi;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -56,6 +58,45 @@ public class form_barang extends javax.swing.JFrame {
         }
     }
 
+    public void kosongkan() {
+        kode_barang.setText("");
+        nama_barang.setText("");
+        harga.setText("");
+        satuan.setText("");
+        stok.setText("");
+        kode_barang.requestFocus();
+    }
+
+    public void awal() {
+        //kode_barang.setEnabled(false);
+        nama_barang.setEnabled(false);
+        harga.setEnabled(false);
+        satuan.setEnabled(false);
+        stok.setEnabled(false);
+        kode_barang.setEnabled(false);
+    }
+
+    public void tampilcombo() {
+
+         Connection conn = Koneksi.getConnection();
+        try {
+            String query = "SELECT satuan FROM barang";
+              java.sql.Statement stmt = conn.createStatement();
+            java.sql.ResultSet res = stmt.executeQuery(query);
+
+            while (res.next()) {
+                cbosatuan.addItem(res.getString("nama"));
+            }
+
+            res.last();
+            int jumlahdata = res.getRow();
+            res.first();
+
+        } catch (SQLException e) {
+        }
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -86,6 +127,8 @@ public class form_barang extends javax.swing.JFrame {
         txt_nilai = new javax.swing.JTextField();
         btn_cari = new javax.swing.JButton();
         btn_reset = new javax.swing.JButton();
+        cbosatuan = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -166,6 +209,10 @@ public class form_barang extends javax.swing.JFrame {
             }
         });
 
+        cbosatuan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel7.setText("SATUAN");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -183,13 +230,21 @@ public class form_barang extends javax.swing.JFrame {
                             .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(nama_barang, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(kode_barang, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(harga, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(stok, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
-                                .addComponent(satuan, javax.swing.GroupLayout.Alignment.LEADING)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(nama_barang, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(harga, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(stok, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                                        .addComponent(satuan, javax.swing.GroupLayout.Alignment.LEADING)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(kode_barang, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel7)
+                                .addGap(38, 38, 38)
+                                .addComponent(cbosatuan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(131, 131, 131)))))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
@@ -222,7 +277,9 @@ public class form_barang extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel1)
-                                    .addComponent(kode_barang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(kode_barang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cbosatuan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel7))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel2)
@@ -340,12 +397,12 @@ public class form_barang extends javax.swing.JFrame {
         Connection conn = Koneksi.getConnection();
         try {
             java.sql.Statement stmt = conn.createStatement();
-            if(cbb_kategori.getSelectedItem().equals("Kode")){
-                SQL = "select * from barang where kode_barang='"+ txt_nilai.getText() +"'";
+            if (cbb_kategori.getSelectedItem().equals("Kode")) {
+                SQL = "select * from barang where kode_barang='" + txt_nilai.getText() + "'";
                 System.out.println(SQL);
-            }else {
-                 SQL = "select * from barang where nama_barang like '%"+ txt_nilai.getText() +"%'";
-                 System.out.println(SQL);
+            } else {
+                SQL = "select * from barang where nama_barang like '%" + txt_nilai.getText() + "%'";
+                System.out.println(SQL);
             }
             java.sql.ResultSet res = stmt.executeQuery(SQL);
             while (res.next()) {
@@ -410,6 +467,7 @@ public class form_barang extends javax.swing.JFrame {
     private javax.swing.JButton btn_cari;
     private javax.swing.JButton btn_reset;
     private javax.swing.JComboBox<String> cbb_kategori;
+    private javax.swing.JComboBox<String> cbosatuan;
     private javax.swing.JTextField harga;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -417,6 +475,7 @@ public class form_barang extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable_BARANG;
     private javax.swing.JTextField kode_barang;
