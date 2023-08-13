@@ -1,0 +1,8 @@
+Untuk MENGATASI GAGAL KONEKSI:
+
+1° Buka tab layanan, tepat setelah basis data.
+
+2° Klik kanan pada folder driver dan pilih tambahkan driver baru.
+
+3° Klik tambah dan cari .jar dari driver yang Anda unduh.
+https://stackoverflow.com/questions/50029588/connecting-netbeans-and-mysql-but-getting-big-integer-error
